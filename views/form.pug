@@ -1,0 +1,16 @@
+html
+html
+   head
+      title Form Tester
+   body
+      form(action = "/render_page", method = "POST")
+         div
+            label(for = "tag") Enter Tag:
+            input(name = "tag" value = "")
+         br
+         div
+            label(for = "value") Enter Tag Value:
+            input(name = "value" value = "")
+         br
+         button(type = "submit" formaction="/" formmethod="POST") Next  
+         button(type = "submit") Submit 
