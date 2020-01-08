@@ -27,6 +27,12 @@ app.get("", function(req, res) {
   res.render("form");
 });
 
+app.get("/clear", function(req, res) {
+      fs.writeFile('./views/index.pug', '', function(){console.log('done')});
+      res.render("form");
+  });
+  
+
 app.get("/", function(req, res) {
   res.render("form");
 });
