@@ -1,0 +1,8 @@
+{
+    "Main heading" : "h1",
+    "Sub heading": "h2",
+    "Paragraph": "p",
+    "List": "ul",
+    "Image": "img"
+    
+}

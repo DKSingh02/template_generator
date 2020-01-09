@@ -3,19 +3,53 @@ html
    head
       title Form Tester
    body
-    
+
     form(action = "/clear", method = "GET")
      label(for = "value") Clear Templte before new creation:
          button(type = "submit")  CLEAR
 
-    form(action = "/render_page", method = "POST")
-         div
-            label(for = "tag") Enter Tag:
-            input(name = "tag" value = "")
-         br
-         div
-            label(for = "value") Enter Tag Value:
-            input(name = "value" value = "")
-         br
-         button(type = "submit" formaction="/" formmethod="POST") NEXT  
-         button(type = "submit") SUBMIT
+   h3 Select Your Components
+   div
+    form(action='/' method="post")
+        label(for='components') Components 
+        select(name='dropDown', id='')
+            each component in Components
+                option=component
+            input(type='submit', value='Submit')
+        br
+        br
+
+
+    if component
+        div
+        form(action='/' method="post")
+            label(for = "value") Enter Component Value:
+            textarea(name = "value" value = "")
+            button(type = "submit", value="Submit") Insert  
+
+       
+    //- form(action = "/render_page", method = "POST")
+    //-      div
+    //-         label(for = "tag") Enter Tag:
+    //-         input(name = "tag" value = "")
+    //-      br
+    //-      div
+    //-         label(for = "value") Enter Tag Value:
+    //-         input(name = "value" value = "")
+    //-      br
+    //-      button(type = "submit" formaction="/" formmethod="POST") NEXT  
+    //-      button(type = "submit") SUBMIT
+
+     //- form(action = "/render_page", method = "POST")
+    //-      div
+    //-         label(for = "tag") Enter Tag:
+    //-         input(name = "tag" value = "")
+    //-      br
+    //-      div
+    //-         label(for = "value") Enter Tag Value:
+    //-         input(name = "value" value = "")
+    //-      br
+    //-      button(type = "submit" formaction="/" formmethod="POST") NEXT  
+    //-      button(type = "submit") SUBMIT
+
+    
