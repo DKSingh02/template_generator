@@ -4,6 +4,8 @@ var fs = require("fs");
 var multer = require("multer");
 var upload = multer();
 var app = express();
+var cleaner = require('clean-html');
+const pug = require('pug');
 
 app.set("view engine", "pug");
 app.set("views", "./views");
@@ -22,19 +24,33 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var cmd_data = "";
 var tagElement = "";
 var tag = '';
+var levelOfNesting = 2;
+var options = {
+  'indent': '\t',
+  'add-break-around-tags': ['ul','li']
+};
 
-app.get("", function(req, res) {
-  res.render("form");
-});
+const printSpaces = function() {
+  var spaces = '';
+  for(var i=0;i<levelOfNesting;i++)spaces+=' ';
+  return spaces; 
+}
 
-app.get("/clear", function(req, res) {
-      fs.writeFile('./views/index.pug', '', function(){console.log('done')});
-      res.render("form");
+const outputHtml = function(res) {
+  var compiledCode = pug.compileFile('./views/index.pug');
+  cleaner.clean(compiledCode(), options, function(html) {
+    res.render("form",{output: html});
   });
-  
+}
 
 app.get("/", function(req, res) {
-  res.render("form");
+  outputHtml(res);
+});
+
+app.post("/clear", function(req, res) {
+  fs.writeFile('./views/index.pug', 'html\r\n head\r\n  title Form Tester\r\n body', function() {
+    outputHtml(res);
+    console.log('done')});
 });
 
 app.post("/render_page", (req, res) => {
@@ -42,45 +58,50 @@ app.post("/render_page", (req, res) => {
 });
 
 app.post("/", function(req, res) {
-  // This is only for header and plain text
   tag = req.body.tag
+
   if (tag === "h1" || tag === "h2" || tag === "h3" || tag === "h4" || tag === "h5" || tag === "h6" || tag === "p") {
     cmd_data = req.body.tag + " " + req.body.value;
-    tagElement = "\r\n" + `${cmd_data}`;
+    tagElement = "\r\n" + printSpaces() + `${cmd_data}`;
     fs.appendFile("./views/index.pug", tagElement, function(err) {
+      outputHtml(res);
       if (err) throw err;
     });
-  }
-
-  // This is for list items
-  else if (tag === "ul" || tag === "div") {
-    cmd_data = req.body.tag;
-    tagElement = "\r\n" + `${cmd_data}`;
+  } else if (tag === "open ul" || tag === "open div") {
+    cmd_data = req.body.tag.split(' ')[1];
+    tagElement = "\r\n" + printSpaces() + `${cmd_data}`;
+    levelOfNesting+=1
     fs.appendFile("./views/index.pug", tagElement, function(err) {
+      outputHtml(res);
       if (err) throw err;
     });
+  } else if (tag === "close ul" || tag === "close div") {
+      levelOfNesting-=1;
+      outputHtml(res);
   } else if (tag === "li") {
     cmd_data = req.body.tag + " " + req.body.value;
-    tagElement = "\n " + `${cmd_data}`;
+    tagElement = "\n" + printSpaces() + `${cmd_data}`;
     fs.appendFile("./views/index.pug", tagElement, function(err) {
+      outputHtml(res);
       if (err) throw err;
     });
   }
   else if (tag === "img") {
       cmd_data = req.body.tag + "(src = '" + req.body.value + "')";
-      tagElement = "\n " + `${cmd_data}`;
+      tagElement = "\n" + printSpaces() + `${cmd_data}`;
       fs.appendFile("./views/index.pug", tagElement, function(err) {
-          if (err) throw err;
+        outputHtml(res);
+        if (err) throw err;
       });
   }
   else if (tag === "code") {
     cmd_data = req.body.tag + " " + req.body.value;
-    tagElement = "\n " + `${cmd_data}`;
+    tagElement = "\n" + printSpaces() + `${cmd_data}`;
     fs.appendFile("./views/index.pug", tagElement, function(err) {
+      outputHtml(res);
       if (err) throw err;
     });
   }
-  res.render("form");
 });
 
 app.listen(3000);

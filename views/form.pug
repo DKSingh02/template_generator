@@ -1,21 +1,21 @@
 html
-html
-   head
-      title Form Tester
-   body
-    
-    form(action = "/clear", method = "GET")
-     label(for = "value") Clear Templte before new creation:
-         button(type = "submit")  CLEAR
+ head
+  title Form Tester
+ body  
+  form(action = "/clear", method = "POST")
+   label(for = "value") Clear Template before new creation:
+   button(type = "submit")  CLEAR
 
-    form(action = "/render_page", method = "POST")
-         div
-            label(for = "tag") Enter Tag:
-            input(name = "tag" value = "")
-         br
-         div
-            label(for = "value") Enter Tag Value:
-            input(name = "value" value = "")
-         br
-         button(type = "submit" formaction="/" formmethod="POST") NEXT  
-         button(type = "submit") SUBMIT
+  form(action = "/render_page", method = "POST")
+   div
+    label(for = "tag") Enter Tag:
+    input(name = "tag" value = "")
+   br
+   div
+    label(for = "value") Enter Tag Value:
+    input(name = "value" value = "")
+   br
+   button(type = "submit" formaction="/" formmethod="POST") NEXT  
+   button(type = "submit") SUBMIT
+  div
+   pre #{output}
