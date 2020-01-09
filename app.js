@@ -43,14 +43,26 @@ const outputHtml = function(res) {
   });
 }
 
+const updateCss = function(req) {
+  var styles = req.body.style.split(',');
+  fs.appendFileSync("./public/styles.css", '.' + req.body.class + ' {');
+  for(var i=0;i<styles.length;i++) {
+    fs.appendFileSync("./public/styles.css", '\r\n\t' + styles[i] + ';');
+  }
+  fs.appendFileSync("./public/styles.css", '\r\n}\r\n\n');
+}
+
 app.get("/", function(req, res) {
   outputHtml(res);
 });
 
-app.post("/clear", function(req, res) {
-  fs.writeFile('./views/index.pug', 'html\r\n head\r\n  title Form Tester\r\n body', function() {
-    outputHtml(res);
-    console.log('done')});
+app.post("/clearPug", function(req, res) {
+  fs.writeFile('./views/index.pug', 'html\r\n head\r\n  title Form Tester\r\n  link(rel="stylesheet", type="text/css", href="styles.css")\r\n body', function() {
+    outputHtml(res);});
+});
+
+app.post("/clearCss", function(req, res) {
+  fs.writeFile('./public/styles.css', '', function() {});
 });
 
 app.post("/render_page", (req, res) => {
@@ -58,17 +70,28 @@ app.post("/render_page", (req, res) => {
 });
 
 app.post("/", function(req, res) {
-  tag = req.body.tag
+  tag = req.body.tag;
+  classname = req.body.class;
 
   if (tag === "h1" || tag === "h2" || tag === "h3" || tag === "h4" || tag === "h5" || tag === "h6" || tag === "p") {
-    cmd_data = req.body.tag + " " + req.body.value;
+    if(classname) {
+      cmd_data = req.body.tag + "." + classname + " " + req.body.value;
+    }
+    else {
+      cmd_data = req.body.tag + " " + req.body.value;
+    }
     tagElement = "\r\n" + printSpaces() + `${cmd_data}`;
     fs.appendFile("./views/index.pug", tagElement, function(err) {
       outputHtml(res);
       if (err) throw err;
     });
   } else if (tag === "open ul" || tag === "open div") {
-    cmd_data = req.body.tag.split(' ')[1];
+    if(classname) {
+      cmd_data = req.body.tag.split(' ')[1] + "." + classname;
+    }
+    else {
+      cmd_data = req.body.tag.split(' ')[1];
+    }
     tagElement = "\r\n" + printSpaces() + `${cmd_data}`;
     levelOfNesting+=1
     fs.appendFile("./views/index.pug", tagElement, function(err) {
@@ -79,7 +102,12 @@ app.post("/", function(req, res) {
       levelOfNesting-=1;
       outputHtml(res);
   } else if (tag === "li") {
-    cmd_data = req.body.tag + " " + req.body.value;
+    if(classname) {
+      cmd_data = req.body.tag + "." + classname + " " + req.body.value ;
+    }
+    else {
+      cmd_data = req.body.tag + " " + req.body.value;
+    }
     tagElement = "\n" + printSpaces() + `${cmd_data}`;
     fs.appendFile("./views/index.pug", tagElement, function(err) {
       outputHtml(res);
@@ -102,6 +130,7 @@ app.post("/", function(req, res) {
       if (err) throw err;
     });
   }
+  if(req.body.style)updateCss(req);
 });
 
 app.listen(3000);
