@@ -25,6 +25,7 @@ var cmd_data = "";
 var tagElement = "";
 var tag = '';
 var levelOfNesting = 2;
+var prevCommands = [];
 var options = {
   'indent': '\t',
   'add-break-around-tags': ['ul','li']
@@ -45,11 +46,19 @@ const outputHtml = function(res) {
 
 const updateCss = function(req) {
   var styles = req.body.style.split(',');
-  fs.appendFileSync("./public/styles.css", '.' + req.body.class + ' {');
+  fs.appendFile("./public/styles.css", '.' + req.body.class + ' {', function(err) {if (err) throw err;});
   for(var i=0;i<styles.length;i++) {
-    fs.appendFileSync("./public/styles.css", '\r\n\t' + styles[i] + ';');
+    fs.appendFile("./public/styles.css", '\r\n\t' + styles[i] + ';', function(err) {if (err) throw err;});
   }
-  fs.appendFileSync("./public/styles.css", '\r\n}\r\n\n');
+  fs.appendFile("./public/styles.css", '\r\n}\r\n\n', function(err) {if (err) throw err;});
+}
+
+const appendToFile = function(res, tagElement) {
+  prevCommands.push(tagElement.length);
+  fs.appendFile("./views/index.pug", tagElement, function(err) {
+    outputHtml(res);
+    if (err) throw err;
+  });
 }
 
 app.get("/", function(req, res) {
@@ -69,6 +78,15 @@ app.post("/render_page", (req, res) => {
   res.render("index");
 });
 
+app.post("/undo", (req, res) => {
+  fs.stat('./views/index.pug', function(err, stats) {
+    if (err) throw err;
+    fs.truncate('./views/index.pug', stats.size - prevCommands.pop(), function() {
+      outputHtml(res);
+    });
+  });
+});
+
 app.post("/", function(req, res) {
   tag = req.body.tag;
   classname = req.body.class;
@@ -81,10 +99,7 @@ app.post("/", function(req, res) {
       cmd_data = req.body.tag + " " + req.body.value;
     }
     tagElement = "\r\n" + printSpaces() + `${cmd_data}`;
-    fs.appendFile("./views/index.pug", tagElement, function(err) {
-      outputHtml(res);
-      if (err) throw err;
-    });
+    appendToFile(res,tagElement);
   } else if (tag === "open ul" || tag === "open div") {
     if(classname) {
       cmd_data = req.body.tag.split(' ')[1] + "." + classname;
@@ -94,10 +109,7 @@ app.post("/", function(req, res) {
     }
     tagElement = "\r\n" + printSpaces() + `${cmd_data}`;
     levelOfNesting+=1
-    fs.appendFile("./views/index.pug", tagElement, function(err) {
-      outputHtml(res);
-      if (err) throw err;
-    });
+    appendToFile(res,tagElement);
   } else if (tag === "close ul" || tag === "close div") {
       levelOfNesting-=1;
       outputHtml(res);
@@ -109,26 +121,17 @@ app.post("/", function(req, res) {
       cmd_data = req.body.tag + " " + req.body.value;
     }
     tagElement = "\n" + printSpaces() + `${cmd_data}`;
-    fs.appendFile("./views/index.pug", tagElement, function(err) {
-      outputHtml(res);
-      if (err) throw err;
-    });
+    appendToFile(res,tagElement);
   }
   else if (tag === "img") {
       cmd_data = req.body.tag + "(src = '" + req.body.value + "')";
       tagElement = "\n" + printSpaces() + `${cmd_data}`;
-      fs.appendFile("./views/index.pug", tagElement, function(err) {
-        outputHtml(res);
-        if (err) throw err;
-      });
+      appendToFile(res,tagElement);
   }
   else if (tag === "code") {
     cmd_data = req.body.tag + " " + req.body.value;
     tagElement = "\n" + printSpaces() + `${cmd_data}`;
-    fs.appendFile("./views/index.pug", tagElement, function(err) {
-      outputHtml(res);
-      if (err) throw err;
-    });
+    appendToFile(res,tagElement);
   }
   if(req.body.style)updateCss(req);
 });
