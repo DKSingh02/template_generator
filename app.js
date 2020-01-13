@@ -33,9 +33,8 @@ app.get("", function(req, res) {
 });
 
 app.get("/clear", function(req, res) {
-  fs.writeFile("./views/index.pug", 'html\r\n head\r\n  title Form Tester\r\n  link(rel="stylesheet", type="text/css", href="styles.css")\r\n body', function() {
-    console.log("done");
-  });
+  fs.writeFile("./views/index.pug", 'html\r\n head\r\n  title Form Tester\r\n  link(rel="stylesheet", type="text/css", href="styles.css")\r\n body', function() {});
+  fs.writeFile("./template.json",'{"template":[]}', function() {});
   res.render("form", {
     Components: data["Components"]
   });
@@ -45,26 +44,23 @@ app.post("/", function(request, response) {
   let selectedComponent = request.body.dropDown;
   let selectedComponentValue = request.body.value;
   let selectedHtmlTag = mappingJson[selectedComponent];
-  console.log("Hello" + request.body.value);
 
   if(selectedHtmlTag) {
       enterTagInJson(selectedHtmlTag);
+      response.render("form", {
+        component: request.body.dropDown,
+        block: (selectedHtmlTag==='div'||selectedHtmlTag==='ul'||selectedHtmlTag==='form')?true:undefined,
+        Components: data["Components"]
+      });
   }
   else {
     enterTagValueJson(selectedComponentValue);
+    response.render("form", {
+      Components: data["Components"]
+    });
   }
   //enterElementInDom(selectedHtmlTag);
-  response.render("form", {
-    component: request.body.dropDown,
-    Components: data["Components"]
-  });
 });
-
-// app.get("/tagValue", function(req, res) {
-//     res.render("form", {
-//       Components: data["Components"]
-//     });
-//   });
 
 app.post("/render_page", (req, res) => {
   res.render("index");
@@ -79,11 +75,10 @@ function enterTagInJson(selectedHtmlTag) {
             tag: selectedHtmlTag 
         })
     
-        console.log(arrayOfObjects)
+        // console.log(arrayOfObjects)
     
         fs.writeFile('./template.json', JSON.stringify(arrayOfObjects), 'utf-8', function(err) {
             if (err) throw err
-            console.log('Done!')
         })
       });
 }
@@ -94,14 +89,13 @@ function enterTagValueJson(value) {
     
         var arrayOfObjects = JSON.parse(data)
         arrayOfObjects.template.push({
-            value: value 
+            innerHtml: value 
         })
     
-        console.log(arrayOfObjects)
+        // console.log(arrayOfObjects)
     
         fs.writeFile('./template.json', JSON.stringify(arrayOfObjects), 'utf-8', function(err) {
             if (err) throw err
-            console.log('Done!')
         })
       });
 }
