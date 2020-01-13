@@ -2,7 +2,6 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var data = require("./data.json");
 var mappingJson = require("./mapping.json");
-
 var fs = require("fs");
 var multer = require("multer");
 var upload = multer();
@@ -38,16 +37,6 @@ app.get("/clear", function(req, res) {
   });
   res.render("form");
 });
-
-// app.get("/", function(req, res) {
-//   res.render("form");
-// });
-
-// app.get("", function (request, response) {
-//     response.render('dropdowndemo', {
-//         Components: data['Components'],
-//     })
-// });
 
 app.post("/", function(request, response) {
   let selectedComponent = request.body.dropDown;
@@ -168,6 +157,4 @@ function enterElementInDom(selectedHtmlTag) {
       //});
       
 }
-
-
 app.listen(3000);

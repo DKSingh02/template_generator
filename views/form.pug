@@ -1,31 +1,29 @@
 html
-html
    head
       title Form Tester
    body
 
     form(action = "/clear", method = "GET")
-     label(for = "value") Clear Templte before new creation:
-         button(type = "submit")  CLEAR
+     label(for = "value") Clear Template before new creation:
+     button(type = "submit")  CLEAR
 
-   h3 Select Your Components
-   div
-    form(action='/' method="post")
-        label(for='components') Components 
-        select(name='dropDown', id='')
-            each component in Components
-                option=component
-            input(type='submit', value='Submit')
-        br
-        br
+    h3 Select Your Components
 
-
+    div
+     form(action='/' method="post")
+      label(for='components') Components 
+      select(name='dropDown', id='')
+       each component in Components
+        option=component
+      input(type='submit', value='Submit')
+    br
+    br
     if component
-        div
-        form(action='/' method="post")
-            label(for = "value") Enter Component Value:
-            textarea(name = "value" value = "")
-            button(type = "submit", value="Submit") Insert  
+     div
+      form(action='/' method="post")
+       label(for = "value") Enter Component Value:
+       textarea(name = "value" value = "")
+       button(type = "submit", value="Submit") Insert  
 
        
     //- form(action = "/render_page", method = "POST")

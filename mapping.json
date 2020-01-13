@@ -3,6 +3,14 @@
     "Sub heading": "h2",
     "Paragraph": "p",
     "List": "ul",
-    "Image": "img"
+    "Image": "img",
+    "List Item": "li",
+    "Div": "div",
+    "Hyperlink": "a",
+    "Line Break": "br",
+    "Form": "form",
+    "Input Text field": "input",
+    "Dropdown": "select",
+    "Button": "button"
     
 }

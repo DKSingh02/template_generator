@@ -4,6 +4,14 @@
         "Sub heading",
         "Paragraph",
         "List",
-        "Image"
+        "List Item",
+        "Image",
+        "Div",
+        "Hyperlink",
+        "Line Break",
+        "Form",
+        "Input Text field",
+        "Dropdown",
+        "Button"
     ]
 }
