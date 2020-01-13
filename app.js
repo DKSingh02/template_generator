@@ -24,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var cmd_data = "";
 var tagElement = "";
 var tag = "";
+var levelOfNesting = 2;
 
 app.get("", function(req, res) {
   res.render("form", {
@@ -32,10 +33,12 @@ app.get("", function(req, res) {
 });
 
 app.get("/clear", function(req, res) {
-  fs.writeFile("./views/index.pug", "", function() {
+  fs.writeFile("./views/index.pug", 'html\r\n head\r\n  title Form Tester\r\n  link(rel="stylesheet", type="text/css", href="styles.css")\r\n body', function() {
     console.log("done");
   });
-  res.render("form");
+  res.render("form", {
+    Components: data["Components"]
+  });
 });
 
 app.post("/", function(request, response) {
