@@ -1,6 +1,7 @@
 html
    head
       title Form Tester
+      script(type='text/javascript' src="../form.js")
    body
 
     form(action = "/clear", method = "GET")
@@ -11,7 +12,7 @@ html
 
     div
      form(action='/' method="post")
-      label(for='components') Components 
+      label(for='components') Select Component 
       select(name='dropDown', id='')
        each component in Components
         option=component

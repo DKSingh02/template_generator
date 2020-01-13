@@ -53,9 +53,6 @@ app.post("/", function(request, response) {
   else {
     enterTagValueJson(selectedComponentValue);
   }
-
-
-
   //enterElementInDom(selectedHtmlTag);
   response.render("form", {
     component: request.body.dropDown,
