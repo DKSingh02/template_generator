@@ -1,8 +1,16 @@
 html
    head
       title Form Tester
-   body
+      script.
+        var isDropdownSelected = false;
+        function myFunction(self) {
+            console.log(self.selectedIndex);
+            self.options[self.selectedIndex].text;
+            isDropdownSelected = true;
 
+        }
+   body
+    
     form(action = "/clear", method = "GET")
      label(for = "value") Clear Template before new creation:
      button(type = "submit")  CLEAR
@@ -54,3 +62,35 @@ html
     //-      button(type = "submit") SUBMIT
 
     
+head
+  title Form Tester
+  body  
+  form(action = "/clearPug", method = "POST")
+   div
+    label Clear Template before new creation:
+    button(type = "submit")  CLEAR
+   br
+   div
+    label Clear CSS Stylesheet before new creation:
+    button(type = "submit" formaction="/clearCss" formmethod="POST")  CLEAR
+  form(action = "/render_page", method = "POST")
+   div
+    label(for = "tag") Enter Tag:
+    input(name = "tag" value = "")
+   br
+   div
+    label(for = "value") Enter Tag Value:
+    input(name = "value" value = "")
+   br
+   div
+    label(for = "class") Enter Class Value:
+    input(name = "class" value = "")
+   br
+   div
+    label(for = "style") Enter Comma Separated Styles:
+    input(name = "style" value = "")
+   br
+   button(type = "submit" formaction="/" formmethod="POST") NEXT  
+   button(type = "submit") SUBMIT
+  div
+   pre #{output}

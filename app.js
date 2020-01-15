@@ -6,6 +6,8 @@ var fs = require("fs");
 var multer = require("multer");
 var upload = multer();
 var app = express();
+var cleaner = require('clean-html');
+const pug = require('pug');
 
 app.set("view engine", "pug");
 app.set("views", "./views");
